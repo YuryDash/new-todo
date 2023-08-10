@@ -1,8 +1,11 @@
-import React from 'react';
+import React from "react";
+import { FilterType } from "./App";
 
 type TodolistPropsType = {
   title: string
-  task: TaskType[]
+  task: Array<TaskType>
+  removeTask: (id: string) => void
+  changeFilter: (filter: FilterType) => void
 }
 
 type TaskType = {
@@ -10,26 +13,44 @@ type TaskType = {
   title: string
   isDone: boolean
 }
-export const Todolist:React.FC<TodolistPropsType> = ({
-  title,
-                                  }) => {
+export const Todolist: React.FC<TodolistPropsType> = ({
+                                                        title,
+                                                        task,
+                                                        removeTask,
+                                                        changeFilter
+                                                      }) => {
+
+
+  const taskMapped = task.map(el => {
+    const onClickDeleteHandler = () => {
+      removeTask(el.id);
+    };
+    return (
+      <ul key={el.id}>
+        <li>
+          <input type="checkbox" checked={el.isDone} />
+          <span>{el.title}</span>
+          <button onClick={onClickDeleteHandler}>x</button>
+        </li>
+      </ul>
+    );
+  });
+  const onClickChangeFilterHandle = (filter: FilterType) => {
+    changeFilter(filter);
+  };
   return (
     <div>
       <div>
         <h3>{title}</h3>
         <div>
-          <input/>
+          <input />
           <button>+</button>
         </div>
-        <ul>
-          <li><input type="checkbox" checked={true}/> <span>HTML&CSS</span></li>
-          <li><input type="checkbox" checked={true}/> <span>JS</span></li>
-          <li><input type="checkbox" checked={false}/> <span>React</span></li>
-        </ul>
+        {taskMapped}
         <div>
-          <button>All</button>
-          <button>Active</button>
-          <button>Completed</button>
+          <button onClick={() => onClickChangeFilterHandle("all")}>All</button>
+          <button onClick={() => onClickChangeFilterHandle("active")}>Active</button>
+          <button onClick={() => onClickChangeFilterHandle("completed")}>Completed</button>
         </div>
       </div>
     </div>
