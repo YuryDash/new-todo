@@ -1,14 +1,18 @@
-import React from "react";
+import React, { ChangeEvent, useState, KeyboardEvent } from "react";
 import { FilterType } from "./App";
 
 type TodolistPropsType = {
   title: string
   task: Array<TaskType>
-  removeTask: (id: string) => void
-  changeFilter: (filter: FilterType) => void
+  removeTask: (id: string, todoID: string) => void
+  changeFilter: (filter: FilterType, todoID: string) => void
+  addTask: (title: string, todoID: string) => void
+  onChangeTaskStatus: (taskID: string, isDone: boolean, todoID: string) => void
+  todoID: string
+  removeTodo: (todoID: string) => void
 }
 
-type TaskType = {
+export type TaskType = {
   id: string
   title: string
   isDone: boolean
@@ -17,18 +21,26 @@ export const Todolist: React.FC<TodolistPropsType> = ({
                                                         title,
                                                         task,
                                                         removeTask,
-                                                        changeFilter
+                                                        changeFilter,
+                                                        addTask,
+                                                        onChangeTaskStatus,
+                                                        todoID,
+                                                        removeTodo
                                                       }) => {
 
+  const [taskTitle, setTaskTitle] = useState("");
 
   const taskMapped = task.map(el => {
     const onClickDeleteHandler = () => {
-      removeTask(el.id);
+      removeTask(el.id, todoID);
+    };
+    const onChangeTaskStatusHandle = (e: ChangeEvent<HTMLInputElement>) => {
+      onChangeTaskStatus(el.id, e.currentTarget.checked,todoID);
     };
     return (
       <ul key={el.id}>
         <li>
-          <input type="checkbox" checked={el.isDone} />
+          <input type="checkbox" checked={el.isDone} onChange={onChangeTaskStatusHandle} />
           <span>{el.title}</span>
           <button onClick={onClickDeleteHandler}>x</button>
         </li>
@@ -36,15 +48,38 @@ export const Todolist: React.FC<TodolistPropsType> = ({
     );
   });
   const onClickChangeFilterHandle = (filter: FilterType) => {
-    changeFilter(filter);
+    changeFilter(filter, todoID);
   };
+  const onChangeFieldHandle = (e: ChangeEvent<HTMLInputElement>) => {
+    setTaskTitle(e.currentTarget.value);
+  };
+  const onCLickAddTaskHandle = () => {
+    if (taskTitle !== "")
+      addTask(taskTitle.trim(), todoID);
+    setTaskTitle("");
+  };
+  const onKeyDownHandle = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onCLickAddTaskHandle();
+    }
+  };
+
+  const deleteTodoHandler = () => {
+    removeTodo( todoID )
+  }
+
   return (
     <div>
       <div>
-        <h3>{title}</h3>
+        <div style={{display:"flex", alignItems:"center"}}>
+          <h3>{title}</h3>
+          <div>
+            <button onClick={deleteTodoHandler}>x</button>
+          </div>
+        </div>
         <div>
-          <input />
-          <button>+</button>
+          <input type="text" onChange={onChangeFieldHandle} onKeyDown={onKeyDownHandle} value={taskTitle} />
+          <button onClick={onCLickAddTaskHandle}>+</button>
         </div>
         {taskMapped}
         <div>
