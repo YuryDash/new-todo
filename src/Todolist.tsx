@@ -1,5 +1,7 @@
-import React, { ChangeEvent, useState, KeyboardEvent } from "react";
+import React, { ChangeEvent } from "react";
+import { AddItemForm } from "./AddItemForm";
 import { FilterType } from "./App";
+import { EditableSpan } from "./EditableSpan";
 
 type TodolistPropsType = {
   title: string
@@ -10,6 +12,8 @@ type TodolistPropsType = {
   onChangeTaskStatus: (taskID: string, isDone: boolean, todoID: string) => void
   todoID: string
   removeTodo: (todoID: string) => void
+  changeTaskTitle: (taskID: string, title: string, todoID: string) => void
+  todoChangeTitle: (title: string, todoID: string) => void
 }
 
 export type TaskType = {
@@ -25,23 +29,26 @@ export const Todolist: React.FC<TodolistPropsType> = ({
                                                         addTask,
                                                         onChangeTaskStatus,
                                                         todoID,
-                                                        removeTodo
+                                                        removeTodo,
+                                                        changeTaskTitle,
+                                                        todoChangeTitle
                                                       }) => {
-
-  const [taskTitle, setTaskTitle] = useState("");
 
   const taskMapped = task.map(el => {
     const onClickDeleteHandler = () => {
       removeTask(el.id, todoID);
     };
     const onChangeTaskStatusHandle = (e: ChangeEvent<HTMLInputElement>) => {
-      onChangeTaskStatus(el.id, e.currentTarget.checked,todoID);
+      onChangeTaskStatus(el.id, e.currentTarget.checked, todoID);
     };
+    const onTitleChange = (title: string) => {
+     changeTaskTitle( el.id, title, todoID )
+    }
     return (
       <ul key={el.id}>
         <li>
           <input type="checkbox" checked={el.isDone} onChange={onChangeTaskStatusHandle} />
-          <span>{el.title}</span>
+          <EditableSpan title={el.title} onTitleChange={onTitleChange}/>
           <button onClick={onClickDeleteHandler}>x</button>
         </li>
       </ul>
@@ -50,38 +57,25 @@ export const Todolist: React.FC<TodolistPropsType> = ({
   const onClickChangeFilterHandle = (filter: FilterType) => {
     changeFilter(filter, todoID);
   };
-  const onChangeFieldHandle = (e: ChangeEvent<HTMLInputElement>) => {
-    setTaskTitle(e.currentTarget.value);
-  };
-  const onCLickAddTaskHandle = () => {
-    if (taskTitle !== "")
-      addTask(taskTitle.trim(), todoID);
-    setTaskTitle("");
-  };
-  const onKeyDownHandle = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onCLickAddTaskHandle();
-    }
-  };
-
   const deleteTodoHandler = () => {
-    removeTodo( todoID )
+    removeTodo(todoID);
+  };
+  const addTaskHandler = (title: string) => {
+    addTask(title, todoID);
+  };
+  const onTodoTitleChange = (title: string) => {
+    todoChangeTitle( title, todoID )
   }
-
   return (
     <div>
       <div>
-        <div style={{display:"flex", alignItems:"center"}}>
-          <h3>{title}</h3>
-          <div>
+
+          <h3>
+            <EditableSpan title={title} onTitleChange={onTodoTitleChange}/>
             <button onClick={deleteTodoHandler}>x</button>
-          </div>
-        </div>
-        <div>
-          <input type="text" onChange={onChangeFieldHandle} onKeyDown={onKeyDownHandle} value={taskTitle} />
-          <button onClick={onCLickAddTaskHandle}>+</button>
-        </div>
-        {taskMapped}
+          </h3>
+          <AddItemForm addItems={addTaskHandler} />
+          {taskMapped}
         <div>
           <button onClick={() => onClickChangeFilterHandle("all")}>All</button>
           <button onClick={() => onClickChangeFilterHandle("active")}>Active</button>
