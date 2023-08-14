@@ -14,7 +14,6 @@ export const AddItemForm: React.FC<AddItemFormPropsType> = ({
   const [error, setError] = useState<string | null>(null);
 
   const addItem = () => {
-    debugger
     if (title.trim() !== "") {
       addItems(title);
       setTitle("");

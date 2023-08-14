@@ -17,6 +17,7 @@ export const EditableSpan: React.FC<EditableSpanPropsType> = ({
   }
 
   const deactivateEditMode = () => {
+    debugger
     setEditMode(false)
     onTitleChange( titleValue )
   }

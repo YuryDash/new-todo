@@ -1,10 +1,11 @@
 import React, { ChangeEvent } from "react";
-import { AddItemForm } from "./AddItemForm";
-import { FilterType } from "./App";
-import { EditableSpan } from "./EditableSpan";
+
 import { Delete } from "@mui/icons-material";
 import { Checkbox, IconButton, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
+import { EditableSpan } from "components/EditableSpan";
+import { FilterType } from "feature/todolist/todolists-reducer";
+import { AddItemForm } from "components/AddItemForm";
 
 type TodolistPropsType = {
   title: string
@@ -47,6 +48,7 @@ export const Todolist: React.FC<TodolistPropsType> = ({
       onChangeTaskStatus(el.id, e.currentTarget.checked, todoID);
     };
     const onTitleChange = (title: string) => {
+      debugger
       changeTaskTitle(el.id, title, todoID);
     };
     return (
