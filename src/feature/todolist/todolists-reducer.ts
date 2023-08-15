@@ -14,17 +14,24 @@ type ChangeTodoFilterAT = ReturnType<typeof changeTodoFilter>
 
 const initialState: TodolistType[] = [];
 
-export const todolistsReducer = (state = initialState, action: TodoActionType) => {
+export const todolistsReducer = (state = initialState, action: TodoActionType): TodolistType[] => {
+  console.log('in reducer', action);
   switch (action.type) {
     case "REMOVE_TODO" :
       return state.filter(todo => todo.id !== action.payload.todoID);
     case "ADD_TODO" :
-      debugger
-      const newTodo: TodolistType = { id: action.payload.todoID, filter: "all", title: action.payload.title };
-      return [newTodo, ...state];
+      console.log( action.payload.title, 'this is title in reducer' );
+      return [{
+        id: action.payload.todoID,
+        title: action.payload.title,
+        filter: "all"
+      }, ...state];
     case "CHANGE_TODO_TITLE" :
-      return state.map(el => el.id === action.payload.todoID
-        ? { ...el, title: action.payload.title } : el);
+      const todolist = state.find(tl => tl.id === action.payload.todoID);
+      if (todolist) {
+        todolist.title = action.payload.title;
+      }
+      return [...state]
     case "CHANGE_TODO_FILTER":
       return state.map(el => el.id === action.payload.todoID
         ? { ...el, filter: action.payload.filter } : el);
@@ -43,6 +50,7 @@ export const removeTodo = (todoID: string) => {
 export const addTodo = (title: string) => {
   debugger;
   const todoID = v1();
+  console.log(title, 'this is title in AC');
   return {
     type: "ADD_TODO",
     payload: { title, todoID }

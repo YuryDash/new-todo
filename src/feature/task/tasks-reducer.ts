@@ -16,7 +16,7 @@ type ChangeTaskStatusAT = ReturnType<typeof changeTaskStatus>
 
 const initialState: TasksStateType = {}
 
-export const tasksReducer = (state = initialState, action: TaskActionType) => {
+export const tasksReducer = (state: TasksStateType = initialState, action: TaskActionType): TasksStateType => {
 
   switch (action.type) {
     case "REMOVE_TASK":
@@ -24,6 +24,7 @@ export const tasksReducer = (state = initialState, action: TaskActionType) => {
     case "ADD_TASK":
       const newTask:TaskType = {id: v1(), title:action.payload.title, isDone: false}
       return { ...state, [action.payload.todoID]: [newTask, ...state[action.payload.todoID]] }
+
     case "CHANGE_TASK_TITLE":
       return {...state, [action.payload.todoID]: state[action.payload.todoID].map( task => task.id === action.payload.taskID
           ? {...task, title: action.payload.title} : task) }

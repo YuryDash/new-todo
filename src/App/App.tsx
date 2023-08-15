@@ -33,8 +33,10 @@ function App() {
     dispatch( changeTodoFilter(todoID, filter))
   };
 
-  const addTasks = (title: string, todoID: string) => {
-    dispatch(addTask(title, todoID))
+  const addTasks = (todoID: string, title: string) => {
+    console.log(title, 'this is title app');
+    console.log(todoID, 'this is todoID app');
+    dispatch(addTask(todoID, title))
   };
 
   const onChangeTaskStatus = (taskID: string, isDone: boolean, todoID: string) => {
@@ -42,12 +44,12 @@ function App() {
   };
 
   const removeTodos = (todoID: string) => {
-    removeTodo(todoID)
+    dispatch(removeTodo(todoID));
   };
 
   const addTodos = (title: string) => {
     debugger;
-    addTodo(title)
+    dispatch(addTodo(title))
   };
 
   const changeTaskTitles = (taskID: string, title: string, todoID: string) => {

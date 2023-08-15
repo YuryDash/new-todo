@@ -8,14 +8,14 @@ import { FilterType } from "feature/todolist/todolists-reducer";
 import { AddItemForm } from "components/AddItemForm";
 
 type TodolistPropsType = {
+  todoID: string
   title: string
   task: Array<TaskType>
   removeTask: (id: string, todoID: string) => void
   changeFilter: (filter: FilterType, todoID: string) => void
-  addTask: (title: string, todoID: string) => void
+  addTask: (todoID: string, title: string) => void
   onChangeTaskStatus: (taskID: string, isDone: boolean, todoID: string) => void
   filter: FilterType
-  todoID: string
   removeTodo: (todoID: string) => void
   changeTaskTitle: (taskID: string, title: string, todoID: string) => void
   todoChangeTitle: (title: string, todoID: string) => void
@@ -40,7 +40,21 @@ export const Todolist: React.FC<TodolistPropsType> = ({
                                                         todoChangeTitle
                                                       }) => {
 
-  const taskMapped = task.map(el => {
+
+  const onClickChangeFilterHandle = (filter: FilterType) => {
+    changeFilter(filter, todoID);
+  };
+  const deleteTodoHandler = () => {
+    removeTodo(todoID);
+  };
+  const addTaskHandler = (title: string) => {
+    addTask(todoID, title);
+  };
+  const onTodoTitleChange = (title: string) => {
+    todoChangeTitle(title, todoID);
+  };
+
+  const taskMapped = task?.map(el => {
     const onClickDeleteHandler = () => {
       removeTask(el.id, todoID);
     };
@@ -51,6 +65,7 @@ export const Todolist: React.FC<TodolistPropsType> = ({
       debugger
       changeTaskTitle(el.id, title, todoID);
     };
+
     return (
       <ul key={el.id}>
         <li style={el.isDone ? {opacity:'0.6', textDecoration:"line-through"} : {}}>
@@ -65,18 +80,7 @@ export const Todolist: React.FC<TodolistPropsType> = ({
       </ul>
     );
   });
-  const onClickChangeFilterHandle = (filter: FilterType) => {
-    changeFilter(filter, todoID);
-  };
-  const deleteTodoHandler = () => {
-    removeTodo(todoID);
-  };
-  const addTaskHandler = (title: string) => {
-    addTask(title, todoID);
-  };
-  const onTodoTitleChange = (title: string) => {
-    todoChangeTitle(title, todoID);
-  };
+
   return (
     <div>
       <div>
