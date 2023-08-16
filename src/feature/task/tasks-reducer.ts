@@ -26,6 +26,7 @@ export const tasksReducer = (state: TasksStateType = initialState, action: TaskA
       return { ...state, [action.payload.todoID]: [newTask, ...state[action.payload.todoID]] }
 
     case "CHANGE_TASK_TITLE":
+      debugger
       return {...state, [action.payload.todoID]: state[action.payload.todoID].map( task => task.id === action.payload.taskID
           ? {...task, title: action.payload.title} : task) }
     case "CHANGE_TASK_STATUS":

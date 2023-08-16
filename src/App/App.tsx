@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import "App/App.css";
 import AppBar from "@mui/material/AppBar";
 import { Container, Grid, IconButton, Paper, Toolbar, Typography } from "@mui/material";
@@ -25,40 +25,32 @@ function App() {
   const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks);
   const dispatch = useDispatch();
 
-  const removeTasks = (id: string, todoID: string) => {
+  const removeTasks = useCallback((id: string, todoID: string) => {
     dispatch(removeTask(id, todoID));
-  };
-
-  const changeFilter = (filter: FilterType, todoID: string) => {
-    dispatch( changeTodoFilter(todoID, filter))
-  };
-
-  const addTasks = (todoID: string, title: string) => {
-    console.log(title, 'this is title app');
-    console.log(todoID, 'this is todoID app');
+  },[]);
+  const changeTaskTitles = useCallback((taskID: string, title: string, todoID: string) => {
+    dispatch(changeTaskTitle(taskID, todoID, title))
+  },[]);
+  const addTasks = useCallback((todoID: string, title: string) => {
     dispatch(addTask(todoID, title))
-  };
-
-  const onChangeTaskStatus = (taskID: string, isDone: boolean, todoID: string) => {
-    dispatch(changeTaskStatus(taskID, todoID, isDone))
-  };
-
-  const removeTodos = (todoID: string) => {
-    dispatch(removeTodo(todoID));
-  };
-
-  const addTodos = (title: string) => {
-    debugger;
+  },[]);
+  const addTodos = useCallback((title: string) => {
     dispatch(addTodo(title))
-  };
+  },[]);
 
-  const changeTaskTitles = (taskID: string, title: string, todoID: string) => {
-   changeTaskTitle(taskID, todoID, title)
-  };
-
-  const todoChangeTitle = (title: string, todoID: string) => {
-    changeTodoTitle( todoID, title )
-  };
+  const changeFilter = useCallback((filter: FilterType, todoID: string) => {
+    dispatch( changeTodoFilter(todoID, filter))
+  },[]);
+  const onChangeTaskStatus = useCallback((taskID: string, isDone: boolean, todoID: string) => {
+    dispatch(changeTaskStatus(taskID, todoID, isDone))
+  },[]);
+  const removeTodos = useCallback((todoID: string) => {
+    dispatch(removeTodo(todoID));
+  },[]);
+  const todoChangeTitle = useCallback((title: string, todoID: string) => {
+    console.log( title );
+    dispatch(changeTodoTitle( todoID, title ))
+  },[]);
 
   return (
     <div className="App">

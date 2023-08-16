@@ -17,13 +17,13 @@ export const EditableSpan: React.FC<EditableSpanPropsType> = ({
   }
 
   const deactivateEditMode = () => {
-    debugger
     setEditMode(false)
+    console.log(titleValue);
     onTitleChange( titleValue )
+    console.log(titleValue);
   }
 
 const onChangeHandle = (e:ChangeEvent<HTMLInputElement>) => {
-  console.log(e.currentTarget.value);
     setTitleValue( e.currentTarget.value )
 }
   return (

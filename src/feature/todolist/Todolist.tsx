@@ -1,11 +1,12 @@
-import React, { ChangeEvent } from "react";
+import React, { memo, useCallback } from "react";
 
 import { Delete } from "@mui/icons-material";
-import { Checkbox, IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import Button from "@mui/material/Button";
 import { EditableSpan } from "components/EditableSpan";
 import { FilterType } from "feature/todolist/todolists-reducer";
 import { AddItemForm } from "components/AddItemForm";
+import { Task } from "feature/task/Task";
 
 type TodolistPropsType = {
   todoID: string
@@ -26,58 +27,66 @@ export type TaskType = {
   title: string
   isDone: boolean
 }
-export const Todolist: React.FC<TodolistPropsType> = ({
-                                                        title,
-                                                        task,
-                                                        removeTask,
-                                                        changeFilter,
-                                                        filter,
-                                                        addTask,
-                                                        onChangeTaskStatus,
-                                                        todoID,
-                                                        removeTodo,
-                                                        changeTaskTitle,
-                                                        todoChangeTitle
-                                                      }) => {
+export const Todolist: React.FC<TodolistPropsType> = memo(({
+                                                             title,
+                                                             task,
+                                                             removeTask,
+                                                             changeFilter,
+                                                             filter,
+                                                             addTask,
+                                                             onChangeTaskStatus,
+                                                             todoID,
+                                                             removeTodo,
+                                                             changeTaskTitle,
+                                                             todoChangeTitle
+                                                           }) => {
+  console.log("Todolist called");
 
 
-  const onClickChangeFilterHandle = (filter: FilterType) => {
+  const onClickChangeFilterHandle = useCallback((filter: FilterType) => {
+    console.log('filter');
     changeFilter(filter, todoID);
-  };
+  },[changeFilter, todoID]);
+
   const deleteTodoHandler = () => {
     removeTodo(todoID);
   };
-  const addTaskHandler = (title: string) => {
+  const addTaskHandler = useCallback((title: string) => {
     addTask(todoID, title);
-  };
-  const onTodoTitleChange = (title: string) => {
+  }, [todoID, addTask]);
+  const onTodoTitleChange = useCallback((title: string) => {
     todoChangeTitle(title, todoID);
-  };
+  },[todoChangeTitle, todoID]);
 
-  const taskMapped = task?.map(el => {
-    const onClickDeleteHandler = () => {
-      removeTask(el.id, todoID);
+  const onClickDeleteHandlerTEST = useCallback((taskID: string) => {
+    removeTask( taskID, todoID )
+  },[removeTask, todoID])
+
+  let taskMapped = task;
+  if (filter === 'active') {
+    taskMapped = task.filter( t => !t.isDone )
+  }
+  if (filter === 'completed') {
+   taskMapped = task.filter( t => t.isDone )
+  }
+  const taskForTodo = taskMapped.map(task => {
+    const onClickDeleteHandler = (taskID: string) => {
+      onClickDeleteHandlerTEST(taskID);
     };
-    const onChangeTaskStatusHandle = (e: ChangeEvent<HTMLInputElement>) => {
-      onChangeTaskStatus(el.id, e.currentTarget.checked, todoID);
-    };
-    const onTitleChange = (title: string) => {
-      debugger
-      changeTaskTitle(el.id, title, todoID);
+    const onChangeTaskStatusHandle = (taskID: string, checked: boolean) => {
+      onChangeTaskStatus(taskID, checked, todoID);
     };
 
+    const onTitleChange = (taskID: string, title: string) => {
+      console.log(title, "title in todos");
+      changeTaskTitle(taskID, title, todoID);
+    };
     return (
-      <ul key={el.id}>
-        <li style={el.isDone ? {opacity:'0.6', textDecoration:"line-through"} : {}}>
-          <Checkbox color={'primary'} checked={el.isDone} onChange={onChangeTaskStatusHandle} />
-          <EditableSpan title={el.title} onTitleChange={onTitleChange} />
-          <IconButton onClick={onClickDeleteHandler}>
-            <Tooltip title="Удалить задачу">
-              <Delete />
-            </Tooltip>
-          </IconButton>
-        </li>
-      </ul>
+      <Task key={task.id}
+            task={task}
+            onClickDeleteHandler={onClickDeleteHandler}
+            onChangeTaskStatusHandle={onChangeTaskStatusHandle}
+            onTitleChange={onTitleChange} />
     );
   });
 
@@ -93,7 +102,7 @@ export const Todolist: React.FC<TodolistPropsType> = ({
           </IconButton>
         </h3>
         <AddItemForm addItems={addTaskHandler} />
-        {taskMapped}
+        {taskForTodo}
         <div>
           <Button
             variant={filter === "all" ? "outlined" : "text"}
@@ -111,4 +120,4 @@ export const Todolist: React.FC<TodolistPropsType> = ({
       </div>
     </div>
   );
-};
+});
