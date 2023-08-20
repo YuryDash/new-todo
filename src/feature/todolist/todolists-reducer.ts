@@ -1,4 +1,6 @@
 import { v1 } from "uuid";
+import { todolistAPI, TodolistTypeResponse } from "api/todolist-api";
+import { AppThunkType } from "feature/store/store";
 
 export type TodolistType = {
   id: string
@@ -6,11 +8,12 @@ export type TodolistType = {
   title: string
 }
 export type FilterType = "all" | "active" | "completed"
-type TodoActionType = RemoveTodoAT | AddTodoAT | ChangeTodoTitleAT | ChangeTodoFilterAT
+export type TodoActionType = RemoveTodoAT | AddTodoAT | ChangeTodoTitleAT | ChangeTodoFilterAT | SetTodosAT
 export type RemoveTodoAT = ReturnType<typeof removeTodo>
 export type AddTodoAT = ReturnType<typeof addTodo>
 type ChangeTodoTitleAT = ReturnType<typeof changeTodoTitle>
 type ChangeTodoFilterAT = ReturnType<typeof changeTodoFilter>
+export type SetTodosAT = ReturnType<typeof setTodos>
 
 const initialState: TodolistType[] = [];
 
@@ -33,6 +36,10 @@ export const todolistsReducer = (state = initialState, action: TodoActionType): 
     case "CHANGE_TODO_FILTER":
       return state.map(el => el.id === action.payload.todoID
         ? { ...el, filter: action.payload.filter } : el);
+    case "SET_TODOS":
+      return action.payload.todos.map( el => ({
+        ...el, filter: "all"
+      }) )
     default:
       return state;
   }
@@ -64,3 +71,20 @@ export const changeTodoFilter = (todoID: string, filter: FilterType) => {
     payload: { todoID, filter }
   } as const;
 };
+export const setTodos = (todos: TodolistTypeResponse[]) => {
+  return {
+    type: "SET_TODOS",
+    payload: {
+      todos
+    }
+  } as const
+}
+
+export const fetchTodos = (): AppThunkType => (dispatch) => {
+  todolistAPI.getTodo()
+    .then((res) => {
+      dispatch(setTodos(res.data));
+    });
+};
+
+

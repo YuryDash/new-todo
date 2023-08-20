@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 
 import { Delete } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
@@ -7,6 +7,9 @@ import { EditableSpan } from "components/EditableSpan";
 import { FilterType } from "feature/todolist/todolists-reducer";
 import { AddItemForm } from "components/AddItemForm";
 import { Task } from "feature/task/Task";
+import { fetchTasks } from "feature/task/tasks-reducer";
+import { useAppDispatch } from "feature/store/store";
+import { TaskStatuses, TaskType } from "api/todolist-api";
 
 type TodolistPropsType = {
   todoID: string
@@ -15,18 +18,13 @@ type TodolistPropsType = {
   removeTask: (id: string, todoID: string) => void
   changeFilter: (filter: FilterType, todoID: string) => void
   addTask: (todoID: string, title: string) => void
-  onChangeTaskStatus: (taskID: string, isDone: boolean, todoID: string) => void
+  onChangeTaskStatus: (taskID: string, status: TaskStatuses, todoID: string) => void
   filter: FilterType
   removeTodo: (todoID: string) => void
   changeTaskTitle: (taskID: string, title: string, todoID: string) => void
   todoChangeTitle: (title: string, todoID: string) => void
 }
 
-export type TaskType = {
-  id: string
-  title: string
-  isDone: boolean
-}
 export const Todolist: React.FC<TodolistPropsType> = memo(({
                                                              title,
                                                              task,
@@ -41,10 +39,13 @@ export const Todolist: React.FC<TodolistPropsType> = memo(({
                                                              todoChangeTitle
                                                            }) => {
   console.log("Todolist called");
+const dispatch = useAppDispatch()
 
+  useEffect(() => {
+  dispatch( fetchTasks(todoID) )
+  }, []);
 
   const onClickChangeFilterHandle = useCallback((filter: FilterType) => {
-    console.log('filter');
     changeFilter(filter, todoID);
   },[changeFilter, todoID]);
 
@@ -58,22 +59,19 @@ export const Todolist: React.FC<TodolistPropsType> = memo(({
     todoChangeTitle(title, todoID);
   },[todoChangeTitle, todoID]);
 
-  const onClickDeleteHandlerTEST = useCallback((taskID: string) => {
-    removeTask( taskID, todoID )
-  },[removeTask, todoID])
 
   let taskMapped = task;
   if (filter === 'active') {
-    taskMapped = task.filter( t => !t.isDone )
+    taskMapped = task.filter( t => t.status === TaskStatuses.New )
   }
   if (filter === 'completed') {
-   taskMapped = task.filter( t => t.isDone )
+   taskMapped = task.filter( t => t.status === TaskStatuses.Completed )
   }
   const taskForTodo = taskMapped.map(task => {
     const onClickDeleteHandler = (taskID: string) => {
-      onClickDeleteHandlerTEST(taskID);
+      removeTask( taskID, todoID )
     };
-    const onChangeTaskStatusHandle = (taskID: string, checked: boolean) => {
+    const onChangeTaskStatusHandle = (taskID: string, checked: TaskStatuses) => {
       onChangeTaskStatus(taskID, checked, todoID);
     };
 
