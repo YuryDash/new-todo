@@ -1,22 +1,42 @@
-import React from "react";
-import "./App.css";
-import { TodolistsList } from "features/TodolistsList/TodolistsList";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
 import { Menu } from "@mui/icons-material";
 import { LinearProgress } from "@mui/material";
-import { useAppSelector } from "app/store";
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Toolbar from "@mui/material/Toolbar";
 import { RequestStatusType } from "app/app-reducer";
+import { useAppDispatch, useAppSelector } from "app/store";
 import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
 import { Login } from "features/Login/Login";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { authMe, logoutWatcher } from "features/Login/auth/auth-reducer";
+import { TodolistsList } from "features/TodolistsList/TodolistsList";
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import "./App.css";
 
 function App() {
   const status = useAppSelector<RequestStatusType>((state) => state.app.status);
+  const isLoggedIn: boolean = useAppSelector<boolean>((state) => state.auth.isLoggedIn);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  //  useEffect( () => {
+  //      dispatch(authMe())
+  // },[] )
+
+  useEffect(() => {
+    dispatch(authMe());
+  }, []);
+
+  const onCLickToggleLog = () => {
+    if (isLoggedIn) {
+      dispatch(logoutWatcher());
+    } else {
+      navigate("login");
+    }
+  };
+
   return (
     <div className="App">
       <AppBar position="static">
@@ -24,15 +44,15 @@ function App() {
           <IconButton edge="start" color="inherit" aria-label="menu">
             <Menu />
           </IconButton>
-          <Typography variant="h6">News</Typography>
-          <Button color="inherit">Login</Button>
+          <Button onClick={onCLickToggleLog} color="inherit">
+            {isLoggedIn ? "logout" : "login"}
+          </Button>
         </Toolbar>
         {status === "loading" && <LinearProgress color={"inherit"} />}
       </AppBar>
       <Container fixed>
         <ErrorSnackbar />
       </Container>
-      {/* eslint-disable-next-line react/jsx-no-undef */}
       <Routes>
         <Route path={"/"} element={<TodolistsList />} />
         <Route path={"login"} element={<Login />} />

@@ -9,9 +9,6 @@ const instance = axios.create({
   },
 });
 
-
-
-
 export const todolistsAPI = {
   getTodolists() {
     return instance.get<TodolistType[]>("todo-lists");
@@ -27,19 +24,13 @@ export const todolistsAPI = {
     return instance.delete<ResponseType>(`todo-lists/${id}`);
   },
   updateTodolist(id: string, title: string) {
-    return instance.put<
-      ResponseType,
-      AxiosResponse<ResponseType>,
-      { title: string }
-    >(`todo-lists/${id}`, { title });
+    return instance.put<ResponseType, AxiosResponse<ResponseType>, { title: string }>(`todo-lists/${id}`, { title });
   },
   getTasks(todolistId: string) {
     return instance.get<GetTasksResponse>(`todo-lists/${todolistId}/tasks`);
   },
   deleteTask(todolistId: string, taskId: string) {
-    return instance.delete<ResponseType>(
-      `todo-lists/${todolistId}/tasks/${taskId}`,
-    );
+    return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
   },
   createTask(todolistId: string, title: string) {
     return instance.post<
@@ -55,9 +46,15 @@ export const todolistsAPI = {
       UpdateTaskModelType
     >(`todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
-  login(data: FormType){
-    return instance.post<ResponseType<{userId: number}>>('auth/login', data)
-  }
+  login(data: FormType) {
+    return instance.post<ResponseType<{ userId: number }>>("auth/login", data);
+  },
+  logout() {
+    return instance.delete<ResponseType>("auth/login");
+  },
+  logMe() {
+    return instance.get<ResponseType<{ id: number; email: string; login: string }>>("auth/me");
+  },
 };
 
 export type TodolistType = {

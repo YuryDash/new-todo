@@ -9,20 +9,21 @@ import TextField from "@mui/material/TextField";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { useFormik } from "formik";
 import { loginWatcher } from "./auth/auth-reducer";
+import { Navigate } from "react-router-dom";
 
 type ErrorFormikType = {
   email?: string;
   password?: string;
 };
 export type FormType = {
-  email: string
-  password: string
-  rememberMe: boolean
-}
+  email: string;
+  password: string;
+  rememberMe: boolean;
+};
 
 export const Login = () => {
-const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
-  const dispatch = useAppDispatch()
+  const isLoggedIn = useAppSelector<boolean>((state) => state.auth.isLoggedIn);
+  const dispatch = useAppDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -47,10 +48,11 @@ const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
       return errors;
     },
     onSubmit: async (values: FormType) => {
-      const promise = await dispatch( loginWatcher(values) )
-      console.log(promise);      
+      const promise = await dispatch(loginWatcher(values));
+      console.log(promise);
     },
   });
+  if (isLoggedIn) return <Navigate to={"/"} />;
 
   return (
     <Grid container justifyContent={"center"}>
