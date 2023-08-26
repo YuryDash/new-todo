@@ -5,23 +5,24 @@ import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { setAppError } from "app/app-reducer";
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
+  function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  },
+);
 
 export function ErrorSnackbar() {
-  const error = useAppSelector<string | null>(state => state.app.error);
-const dispatch = useAppDispatch()
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+  const error = useAppSelector<string | null>((state) => state.app.error);
+  const dispatch = useAppDispatch();
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
     if (reason === "clickaway") {
       return;
     } else {
-      dispatch( setAppError(null) )
+      dispatch(setAppError(null));
     }
-
   };
 
   return (
