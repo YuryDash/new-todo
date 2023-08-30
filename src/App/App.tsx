@@ -11,7 +11,7 @@ import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
 import { Login } from "features/Login/Login";
 import { authMe, logoutWatcher } from "features/Login/auth/auth-reducer";
 import { TodolistsList } from "features/TodolistsList/TodolistsList";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 
@@ -20,12 +20,8 @@ function App() {
   const isLoggedIn: boolean = useAppSelector<boolean>((state) => state.auth.isLoggedIn);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  //  useEffect( () => {
-  //      dispatch(authMe())
-  // },[] )
-
-  useEffect(() => {
+  
+  useLayoutEffect(() => {
     dispatch(authMe());
   }, []);
 
@@ -62,5 +58,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

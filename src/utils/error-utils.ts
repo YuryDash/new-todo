@@ -1,25 +1,18 @@
-import { AppActionsType, setAppError, setAppStatus } from "app/app-reducer";
-import { Dispatch } from "redux";
 import { ResponseType } from "api/todolists-api";
+import { appActions } from "app/app-reducer";
+import { AppThunkDispatch } from "app/store";
 
-export const handleServerAppError = <T>(
-  dispatch: ErrorUtilsDispatchType,
-  data: ResponseType<T>,
-) => {
+export const handleServerAppError = <T>(dispatch: AppThunkDispatch, data: ResponseType<T>) => {
   if (data.messages.length) {
-    dispatch(setAppStatus("idle"));
-    dispatch(setAppError(data.messages[0]));
+    dispatch(appActions.setAppError({ error: data.messages[0] }));
+    dispatch(appActions.setAppStatus({ status: "idle" }));
   } else {
-    dispatch(setAppError("some error"));
+    dispatch(appActions.setAppError({ error: "some error" }));
   }
-  dispatch(setAppStatus("idle"));
+  dispatch(appActions.setAppStatus({ status: "idle" }));
 };
 
-export const handleServerNetworkError = (
-  dispatch: ErrorUtilsDispatchType,
-  error: { message: string },
-) => {
-  dispatch(setAppStatus("idle"));
-  dispatch(setAppError(error.message));
+export const handleServerNetworkError = (dispatch: AppThunkDispatch, error: { message: string }) => {
+  dispatch(appActions.setAppError({ error: error.message }));
+  dispatch(appActions.setAppStatus({ status: "idle" }));
 };
-type ErrorUtilsDispatchType = Dispatch<AppActionsType>;
