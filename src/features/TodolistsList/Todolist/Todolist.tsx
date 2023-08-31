@@ -96,7 +96,7 @@ export const Todolist = React.memo(function (props: PropsType) {
       </h3>
       <AddItemForm addItem={addTask} />
       <div>
-        {tasksForTodolist.map((t) => (
+        {tasksForTodolist?.map((t) => (
           <Task
             key={t.id}
             task={t}

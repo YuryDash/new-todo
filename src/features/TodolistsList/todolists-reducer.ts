@@ -34,7 +34,6 @@ const slice = createSlice({
     }
   },
 });
-slice.getInitialState;
 export const todoActions = slice.actions;
 export const todoReducer = slice.reducer;
 export type TodosActionsType = ReturnType<typeof slice.getInitialState>;
