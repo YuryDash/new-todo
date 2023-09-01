@@ -8,7 +8,7 @@ import {
   todoActions,
   TodolistDomainType,
 } from "./todolists-reducer";
-import { addTaskTC, removeTaskTC, TasksStateType, updateTaskTC } from "./tasks-reducer";
+import { TasksStateType, taskThunk, updateTaskTC } from "./tasks-reducer";
 import { TaskStatuses } from "api/todolists-api";
 import { AddItemForm } from "components/AddItemForm/AddItemForm";
 import { Todolist } from "./Todolist/Todolist";
@@ -26,12 +26,12 @@ export const TodolistsList: React.FC = () => {
     isLoggedIn && dispatch(fetchTodolistsTC());
   }, []);
 
-  const removeTask = useCallback(function (id: string, todolistId: string) {
-    dispatch(removeTaskTC(id, todolistId));
+  const removeTask = useCallback(function (taskID: string, todoID: string) {
+    dispatch(taskThunk.removeTask({taskID, todoID}));
   }, []);
 
   const addTask = useCallback(function (title: string, todolistId: string) {
-    dispatch( addTaskTC(title, todolistId));
+    dispatch( taskThunk.addTask({title, todolistId}));
   }, []);
 
   const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
