@@ -1,7 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { FormType } from "features/Login/Login";
+import { UpdateDomainTaskModelType } from "features/TodolistsList/tasks-reducer";
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: "https://social-network.samuraijs.com/api/1.1/",
   withCredentials: true,
   headers: {
@@ -32,12 +33,12 @@ export const todolistsAPI = {
   deleteTask(todolistId: string, taskId: string) {
     return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
   },
-  createTask(todolistId: string, title: string) {
+  createTask(arg: ArgTaskAddType) {
     return instance.post<
       ResponseType<{ item: TaskType }>,
       AxiosResponse<ResponseType<{ item: TaskType }>>,
       { title: string }
-    >(`todo-lists/${todolistId}/tasks`, { title });
+    >(`todo-lists/${arg.todolistId}/tasks`, { title: arg.title });
   },
   updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
     return instance.put<
@@ -46,15 +47,7 @@ export const todolistsAPI = {
       UpdateTaskModelType
     >(`todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
-  login(data: FormType) {
-    return instance.post<ResponseType<{ userId: number }>>("auth/login", data);
-  },
-  logout() {
-    return instance.delete<ResponseType>("auth/login");
-  },
-  logMe() {
-    return instance.get<ResponseType<{ id: number; email: string; login: string }>>("auth/me");
-  },
+
 };
 
 export type TodolistType = {
@@ -113,4 +106,13 @@ type GetTasksResponse = {
   error: string | null;
   totalCount: number;
   items: TaskType[];
+};
+export type ArgTaskAddType = {
+  todolistId: string;
+  title: string;
+};
+export type ArgTaskUpdateType = {
+  todolistId: string;
+  taskId: string;
+  domainModel: UpdateDomainTaskModelType;
 };

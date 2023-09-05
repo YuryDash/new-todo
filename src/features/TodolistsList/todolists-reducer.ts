@@ -1,10 +1,10 @@
-import { Filter } from "@mui/icons-material";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ResponseResultCode, todolistsAPI, TodolistType } from "api/todolists-api";
-import { appActions, RequestStatusType } from "app/app-reducer";
-import { AppThunk } from "app/store";
-import { AxiosError } from "axios";
-import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {ResponseResultCode, todolistsAPI, TodolistType} from "common/api/todolists-api";
+import {appActions, RequestStatusType} from "app/app-reducer";
+import {AppThunk} from "app/store";
+import {AxiosError} from "axios";
+import {handleServerNetworkError} from "common/utils/handleServerNetworkError";
+import {handleServerAppError} from "common/utils/handleServerAppError";
 
 const slice = createSlice({
   name: "todolists",
@@ -64,7 +64,7 @@ export const removeTodolistTC = (todolistId: string): AppThunk => {
         dispatch(appActions.setAppStatus({ status: "idle" }));
       })
       .catch((e: AxiosError) => {
-        handleServerNetworkError(dispatch, e);
+        handleServerNetworkError(e, dispatch);
       });
   };
 };

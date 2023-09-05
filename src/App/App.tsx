@@ -7,7 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import { RequestStatusType } from "app/app-reducer";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
+import { ErrorSnackbar } from "common/components/ErrorSnackbar/ErrorSnackbar";
 import { Login } from "features/Login/Login";
 import { authMe, logoutWatcher } from "features/Login/auth/auth-reducer";
 import { TodolistsList } from "features/TodolistsList/TodolistsList";

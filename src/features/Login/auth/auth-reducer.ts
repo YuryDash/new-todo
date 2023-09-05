@@ -1,10 +1,12 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ResponseResultCode, todolistsAPI } from "api/todolists-api";
-import { AppThunk } from "app/store";
-import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
-import { FormType } from "../Login";
-import { appActions } from "app/app-reducer";
-import { todoActions } from "features/TodolistsList/todolists-reducer";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {ResponseResultCode} from "common/api/todolists-api";
+import {AppThunk} from "app/store";
+import {handleServerNetworkError} from "common/utils/handleServerNetworkError";
+import {FormType} from "../Login";
+import {appActions} from "app/app-reducer";
+import {todoActions} from "features/TodolistsList/todolists-reducer";
+import {handleServerAppError} from "common/utils/handleServerAppError";
+import {authAPI} from "features/Login/auth/authAPI";
 
 const slice = createSlice({
   name: "auth",
@@ -25,7 +27,7 @@ export const loginWatcher =
   async (dispatch) => {
     dispatch(appActions.setAppStatus({ status: "loading" }));
     try {
-      const res = await todolistsAPI.login(formData);
+      const res = await authAPI.login(formData);
       if (res.data.resultCode === 0) {
         dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
         dispatch(appActions.setAppStatus({ status: "idle" }));
@@ -33,13 +35,13 @@ export const loginWatcher =
         handleServerAppError(dispatch, res.data);
       }
     } catch (error) {
-      handleServerNetworkError(dispatch, error as { message: string });
+      handleServerNetworkError(error, dispatch);
     }
   };
 export const logoutWatcher = (): AppThunk => async (dispatch) => {
   dispatch(appActions.setAppStatus({ status: "loading" }));
   try {
-    const res = await todolistsAPI.logout();
+    const res = await authAPI.logout();
     if (res.data.resultCode === ResponseResultCode.OK) {
       dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
       dispatch(todoActions.setTodolists({ todolists: [] }));
@@ -49,19 +51,19 @@ export const logoutWatcher = (): AppThunk => async (dispatch) => {
     }
   } catch (error) {
     console.log(error);
-    handleServerNetworkError(dispatch, error as { message: string });
+    handleServerNetworkError(error, dispatch);
   }
 };
 
 export const authMe = (): AppThunk => async (dispatch) => {
   try {
-    const res = await todolistsAPI.logMe();
+    const res = await authAPI.logMe();
     if (res.data.resultCode === ResponseResultCode.OK) {
       dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
     } else {
       handleServerAppError(dispatch, res.data);
     }
   } catch (error) {
-    handleServerNetworkError(dispatch, error as { message: string });
+    handleServerNetworkError(error, dispatch);
   }
 };
