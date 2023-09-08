@@ -1,61 +1,74 @@
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  AppBar,
+  Button,
+  CircularProgress,
+  Container,
+  IconButton,
+  LinearProgress,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { LinearProgress } from "@mui/material";
-import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import IconButton from "@mui/material/IconButton";
-import Toolbar from "@mui/material/Toolbar";
-import { RequestStatusType } from "app/app-reducer";
-import { useAppDispatch, useAppSelector } from "app/store";
-import { ErrorSnackbar } from "common/components/ErrorSnackbar/ErrorSnackbar";
-import { Login } from "features/Login/Login";
-import { authThunks } from "features/Login/auth/auth-reducer";
-import { TodolistsList } from "features/TodolistsList/TodolistsList";
-import { useLayoutEffect } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Login } from "features/auth/ui/login/login";
 import "./App.css";
+import { TodolistsList } from "features/TodolistsList/TodolistsList";
+import { ErrorSnackbar } from "common/components";
+import { useActions } from "common/hooks";
+import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
+import { selectAppStatus, selectIsInitialized } from "app/app.selectors";
+import { authThunks } from "features/auth/model/auth.slice";
 
 function App() {
-  const status = useAppSelector<RequestStatusType>((state) => state.app.status);
-  const isLoggedIn: boolean = useAppSelector<boolean>((state) => state.auth.isLoggedIn);
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  
-  useLayoutEffect(() => {
-    dispatch(authThunks.authMe());
+  const status = useSelector(selectAppStatus);
+  const isInitialized = useSelector(selectIsInitialized);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+
+  const { initializeApp, logout } = useActions(authThunks);
+
+  useEffect(() => {
+    initializeApp();
   }, []);
 
-  const onCLickToggleLog = () => {
-    if (isLoggedIn) {
-      dispatch(authThunks.logout());
-    } else {
-      navigate("login");
-    }
-  };
+  const logoutHandler = () => logout();
+
+  if (!isInitialized) {
+    return (
+      <div style={{ position: "fixed", top: "30%", textAlign: "center", width: "100%" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
-    <div className="App">
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <Menu />
-          </IconButton>
-          <Button onClick={onCLickToggleLog} color="inherit">
-            {isLoggedIn ? "logout" : "login"}
-          </Button>
-        </Toolbar>
-        {status === "loading" && <LinearProgress color={"inherit"} />}
-      </AppBar>
-      <Container fixed>
+    <BrowserRouter>
+      <div className="App">
         <ErrorSnackbar />
-      </Container>
-      <Routes>
-        <Route path={"/"} element={<TodolistsList />} />
-        <Route path={"login"} element={<Login />} />
-        <Route path={"404"} element={<h1>404. PAGE NOT FOUND</h1>} />
-        <Route path={"*"} element={<Navigate to={"404"} />} />
-      </Routes>
-    </div>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="menu">
+              <Menu />
+            </IconButton>
+            <Typography variant="h6">News</Typography>
+            {isLoggedIn && (
+              <Button color="inherit" onClick={logoutHandler}>
+                Log out
+              </Button>
+            )}
+          </Toolbar>
+          {status === "loading" && <LinearProgress />}
+        </AppBar>
+        <Container fixed>
+          <Routes>
+            <Route path={"/"} element={<TodolistsList />} />
+            <Route path={"/login"} element={<Login />} />
+          </Routes>
+        </Container>
+      </div>
+    </BrowserRouter>
   );
 }
+
 export default App;
