@@ -1,8 +1,8 @@
 import { appActions } from "app/app-reducer";
-import { AppThunkDispatch } from "app/store";
+import { AppDispatch } from "app/store";
 import axios from "axios";
 
-export const handleServerNetworkError = (err: unknown, dispatch: AppThunkDispatch):void => {
+export const handleServerNetworkError = (err: unknown, dispatch: AppDispatch):void => {
   let errorMessage = 'Some Error occurred'
   if(axios.isAxiosError(err)){
     errorMessage = err.response?.data?.message || err.message || errorMessage

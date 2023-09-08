@@ -1,15 +1,15 @@
 import {FormType} from "features/Login/Login";
-import {instance, ResponseType} from "common/api/todolists-api";
+import {instance, BaseResponseType} from "common/api/todolists-api";
 
 
 export const authAPI = {
   login(data: FormType) {
-    return instance.post<ResponseType<{ userId: number }>>("auth/login", data);
+    return instance.post<BaseResponseType<{ userId: number }>>("auth/login", data);
   },
   logout() {
-    return instance.delete<ResponseType>("auth/login");
+    return instance.delete<BaseResponseType>("auth/login");
   },
   logMe() {
-    return instance.get<ResponseType<{ id: number; email: string; login: string }>>("auth/me");
+    return instance.get<BaseResponseType<{ id: number; email: string; login: string }>>("auth/me");
   },
 }

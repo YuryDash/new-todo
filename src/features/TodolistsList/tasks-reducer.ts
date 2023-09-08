@@ -14,7 +14,6 @@ import { createAppAsyncThunk } from "common/utils/createAppAsyncThunk";
 import { handleServerAppError } from "common/utils/handleServerAppError";
 import { handleServerNetworkError } from "common/utils/handleServerNetworkError";
 import { todoActions } from "./todolists-reducer";
-added structure and createAppThunk
 const initialState: TasksStateType = {};
 
 const slice = createSlice({

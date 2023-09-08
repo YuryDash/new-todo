@@ -16,34 +16,34 @@ export const todolistsAPI = {
   },
   createTodolist(title: string) {
     return instance.post<
-      ResponseType<{ item: TodolistType }>,
-      AxiosResponse<ResponseType<{ item: TodolistType }>>,
+      BaseResponseType<{ item: TodolistType }>,
+      AxiosResponse<BaseResponseType<{ item: TodolistType }>>,
       { title: string }
     >("todo-lists", { title });
   },
   deleteTodolist(id: string) {
-    return instance.delete<ResponseType>(`todo-lists/${id}`);
+    return instance.delete<BaseResponseType>(`todo-lists/${id}`);
   },
   updateTodolist(id: string, title: string) {
-    return instance.put<ResponseType, AxiosResponse<ResponseType>, { title: string }>(`todo-lists/${id}`, { title });
+    return instance.put<BaseResponseType, AxiosResponse<BaseResponseType>, { title: string }>(`todo-lists/${id}`, { title });
   },
   getTasks(todolistId: string) {
     return instance.get<GetTasksResponse>(`todo-lists/${todolistId}/tasks`);
   },
   deleteTask(todolistId: string, taskId: string) {
-    return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
+    return instance.delete<BaseResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
   },
   createTask(arg: ArgTaskAddType) {
     return instance.post<
-      ResponseType<{ item: TaskType }>,
-      AxiosResponse<ResponseType<{ item: TaskType }>>,
+      BaseResponseType<{ item: TaskType }>,
+      AxiosResponse<BaseResponseType<{ item: TaskType }>>,
       { title: string }
     >(`todo-lists/${arg.todolistId}/tasks`, { title: arg.title });
   },
   updateTask(todolistId: string, taskId: string, model: UpdateTaskModelType) {
     return instance.put<
-      ResponseType<{ item: TaskType }>,
-      AxiosResponse<ResponseType<{ item: TaskType }>>,
+      BaseResponseType<{ item: TaskType }>,
+      AxiosResponse<BaseResponseType<{ item: TaskType }>>,
       UpdateTaskModelType
     >(`todo-lists/${todolistId}/tasks/${taskId}`, model);
   },
@@ -56,10 +56,14 @@ export type TodolistType = {
   addedDate: string;
   order: number;
 };
-export type ResponseType<D = {}> = {
+type FieldErrorType = {
+  field: string,
+  error: string
+}
+export type BaseResponseType<D = {}> = {
   resultCode: number;
   messages: Array<string>;
-  fieldsErrors: Array<string>;
+  fieldsErrors: Array<FieldErrorType>;
   data: D;
 };
 

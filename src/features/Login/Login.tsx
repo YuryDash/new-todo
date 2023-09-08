@@ -7,9 +7,10 @@ import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { useAppDispatch, useAppSelector } from "app/store";
-import { useFormik } from "formik";
-import { loginWatcher } from "./auth/auth-reducer";
+import { FormikHelpers, useFormik } from "formik";
 import { Navigate } from "react-router-dom";
+import { authThunks } from "./auth/auth-reducer";
+import { BaseResponseType } from "common/api/todolists-api";
 
 type ErrorFormikType = {
   email?: string;
@@ -47,9 +48,17 @@ export const Login = () => {
 
       return errors;
     },
-    onSubmit: async (values: FormType) => {
-      const promise = await dispatch(loginWatcher(values));
-      console.log(promise);
+    onSubmit: (values: FormType, formikHelpers: FormikHelpers<{ email: string; password: string; rememberMe: boolean; }>) => {
+      dispatch(authThunks.login(values))
+      .unwrap()
+      .then( (res)=> {
+        debugger
+      })
+      .catch( (e:BaseResponseType) => {
+        debugger
+        formikHelpers.setFieldError(e.fieldsErrors[0]?.field, e.fieldsErrors[0]?.error)
+      } )
+
     },
   });
   if (isLoggedIn) return <Navigate to={"/"} />;

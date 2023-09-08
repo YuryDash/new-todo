@@ -9,7 +9,7 @@ import { RequestStatusType } from "app/app-reducer";
 import { useAppDispatch, useAppSelector } from "app/store";
 import { ErrorSnackbar } from "common/components/ErrorSnackbar/ErrorSnackbar";
 import { Login } from "features/Login/Login";
-import { authMe, logoutWatcher } from "features/Login/auth/auth-reducer";
+import { authThunks } from "features/Login/auth/auth-reducer";
 import { TodolistsList } from "features/TodolistsList/TodolistsList";
 import { useLayoutEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
@@ -22,12 +22,12 @@ function App() {
   const navigate = useNavigate();
   
   useLayoutEffect(() => {
-    dispatch(authMe());
+    dispatch(authThunks.authMe());
   }, []);
 
   const onCLickToggleLog = () => {
     if (isLoggedIn) {
-      dispatch(logoutWatcher());
+      dispatch(authThunks.logout());
     } else {
       navigate("login");
     }
