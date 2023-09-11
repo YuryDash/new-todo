@@ -14,12 +14,12 @@ import {
 import { Menu } from "@mui/icons-material";
 import { Login } from "features/auth/ui/login/login";
 import "./App.css";
-import { TodolistsList } from "features/TodolistsList/TodolistsList";
 import { ErrorSnackbar } from "common/components";
 import { useActions } from "common/hooks";
 import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { selectAppStatus, selectIsInitialized } from "app/app.selectors";
 import { authThunks } from "features/auth/model/auth.slice";
+import {TodolistsList} from "features/todolists-list/ui/todolists-list";
 
 function App() {
   const status = useSelector(selectAppStatus);
@@ -45,11 +45,11 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <ErrorSnackbar />
+        <ErrorSnackbar/>
         <AppBar position="static">
           <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="menu">
-              <Menu />
+              <Menu/>
             </IconButton>
             <Typography variant="h6">News</Typography>
             {isLoggedIn && (
@@ -58,12 +58,12 @@ function App() {
               </Button>
             )}
           </Toolbar>
-          {status === "loading" && <LinearProgress />}
+          {status === "loading" && <LinearProgress/>}
         </AppBar>
         <Container fixed>
           <Routes>
-            <Route path={"/"} element={<TodolistsList />} />
-            <Route path={"/login"} element={<Login />} />
+            <Route path={"/"} element={<TodolistsList/>}/>
+            <Route path={"/login"} element={<Login/>}/>
           </Routes>
         </Container>
       </div>

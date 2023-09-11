@@ -4,7 +4,6 @@ import { useAppDispatch } from "common/hooks/useAppDispatch";
 
 export const useActions = <T extends ActionCreatorsMapObject>(actions: T) => {
   const dispatch = useAppDispatch();
-
   return useMemo(() => bindActionCreators<T, RemapActionCreators<T>>(actions, dispatch), [actions, dispatch]);
 };
 
