@@ -3,10 +3,10 @@ import {Checkbox, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
 import {EditableSpan} from "common/components";
 import {TaskStatuses} from "common/enums";
-import {TaskType} from "features/todolists-list/todolists/todolist/api/todolists.api";
 import {useActions} from "common/hooks";
 import {tasksThunks} from "features/todolists-list/tasks/model/tasks.reducer";
-
+import s from './Task.module.css'
+import {TaskType} from "features/todolists-list/tasks/api/tasks.api";
 type Props = {
   task: TaskType;
   todolistId: string;
@@ -36,7 +36,7 @@ export const Task: FC<Props> = React.memo(({
   }
 
   return (
-    <div key={task.id} className={task.status === TaskStatuses.Completed ? "is-done" : ""}>
+    <div key={task.id} className={task.status === TaskStatuses.Completed ? s.isDone : ""}>
       <Checkbox checked={task.status === TaskStatuses.Completed} color="primary" onChange={changeStatusHandler}/>
 
       <EditableSpan value={task.title} onChange={changeTitleHandler}/>

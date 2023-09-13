@@ -19,7 +19,7 @@ import { useActions } from "common/hooks";
 import { selectIsLoggedIn } from "features/auth/model/auth.selectors";
 import { selectAppStatus, selectIsInitialized } from "app/app.selectors";
 import { authThunks } from "features/auth/model/auth.slice";
-import {TodolistsList} from "features/todolists-list/ui/todolists-list";
+import {TodolistsList} from "features/todolists-list/ui/Todolists-list";
 
 function App() {
   const status = useSelector(selectAppStatus);
